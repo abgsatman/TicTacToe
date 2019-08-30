@@ -56,6 +56,6 @@ public class AuthManager : Singleton<AuthManager>
 
     public void AutoLogin()
     {
-
+        Debug.Log("Auto Login...");
     }
 }

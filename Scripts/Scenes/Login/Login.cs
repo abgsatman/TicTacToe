@@ -23,6 +23,8 @@ public class Login : MonoBehaviour
 
     void DoLogin()
     {
+        Debug.Log("Login süreci başladı..");
+
         string email = emailForm.text;
         string password = passwordForm.text;
 
