@@ -1,18 +1,34 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class EnumData : MonoBehaviour
+﻿public enum Positions
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    s1,
+    s2,
+    s3,
+    s4,
+    s5,
+    s6,
+    s7,
+    s8,
+    s9
+}
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+public enum Symbols
+{
+    X,
+    O
+}
+
+public enum PlayerID
+{
+    PlayerA,
+    PlayerB
+}
+
+public enum GameState
+{
+    Login,
+    Signup,
+    Lobby,
+    Gameplay,
+    Result,
+    Transaction
 }

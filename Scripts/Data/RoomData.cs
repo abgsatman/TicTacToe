@@ -2,17 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoomData : MonoBehaviour
+public class RoomData : Singleton<RoomData>
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    #region General
+    public string roomId;
+    public PlayerID playerId;
+    #endregion
 
-    // Update is called once per frame
-    void Update()
+    #region OpponentInformation
+    public string otherUserId;
+    public string otherUsername;
+    public int otherScore;
+    #endregion
+
+    #region Gameplay
+    private PlayerID turn;
+    public PlayerID Turn
     {
-        
+        get
+        {
+            return turn;
+        }
+        set
+        {
+            turn = value;
+        }
     }
+    #endregion
+
+    #region Others
+    public Room[] roomList;
+    #endregion
 }
