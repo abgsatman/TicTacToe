@@ -14,10 +14,15 @@ public class Signup : MonoBehaviour
     private DBManager DB;
     private AuthManager auth;
 
+    private UserData user;
+
     void Start()
     {
         DB = DBManager.Instance;
         auth = AuthManager.Instance;
+        user = UserData.Instance;
+
+        user.gameState = GameState.Signup;
 
         signupButtonForm.onClick.AddListener(DoSignup);
     }

@@ -1,8 +1,12 @@
-﻿using Firebase.Database;
+﻿using Firebase;
+using Firebase.Database;
+using Firebase.Unity.Editor;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class DBManager : Singleton<DBManager>
 {
@@ -15,7 +19,10 @@ public class DBManager : Singleton<DBManager>
     public DatabaseReference usersDatabase;
     public DatabaseReference roomsDatabase;
     public DatabaseReference invitesDatabase;
-    
+    public DatabaseReference acceptedInvitesDatabase;
+
+    public string FirebaseDBURL = "https://udemy-deneme-projesi.firebaseio.com/";
+
     void Start()
     {
         auth = AuthManager.Instance;
@@ -29,13 +36,16 @@ public class DBManager : Singleton<DBManager>
 
     void Initialization()
     {
-        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl(FirebaseDBURL);
+
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
             var dependencyStatus = task.Result;
-            if (dependencyStatus == Firebase.DependencyStatus.Available)
+            if (dependencyStatus == DependencyStatus.Available)
             {
                 usersDatabase = FirebaseDatabase.DefaultInstance.GetReference("Users");
                 roomsDatabase = FirebaseDatabase.DefaultInstance.GetReference("Rooms");
                 invitesDatabase = FirebaseDatabase.DefaultInstance.GetReference("Invites");
+                acceptedInvitesDatabase = FirebaseDatabase.DefaultInstance.GetReference("AcceptedInvites");
 
                 if(auth.auth.CurrentUser != null)
                 {
@@ -48,7 +58,7 @@ public class DBManager : Singleton<DBManager>
             }
             else
             {
-                Debug.LogError(System.String.Format(
+                Debug.LogError(String.Format(
                   "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
             }
         });
@@ -106,16 +116,24 @@ public class DBManager : Singleton<DBManager>
 
         Dictionary<string, object> roomDetails = new Dictionary<string, object>();
         roomDetails["PlayerA"] = user.UserID;
-        roomDetails["PlayerB"] = "";
-        roomDetails["ResultA"] = "";
-        roomDetails["ResultB"] = "";
+        roomDetails["PlayerB"] = "none";
+        roomDetails["Result"] = "none";
         roomDetails["PlayerAReady"] = false;
         roomDetails["PlayerBReady"] = false;
+        roomDetails["Turn"] = "PlayerA";
 
         roomsDatabase.Child(roomId).UpdateChildrenAsync(roomDetails);
+
+        room.playerId = PlayerID.PlayerA;
+
+        OpenListenRoom();
+        OpenListenInvites();
+
+        Debug.Log("Oda Kuruldu... Diğer oyuncu bekleniyor... Transaction sahnesine yönlendiriliyorsunuz...");
+        SceneManager.LoadScene("Transaction");
     }
 
-    public void GetRoomList()
+    public void GetRoomList(Dropdown roomList)
     {
         roomsDatabase.GetValueAsync().ContinueWith(task =>
         {
@@ -127,34 +145,57 @@ public class DBManager : Singleton<DBManager>
             {
                 DataSnapshot snapshot = task.Result;
 
+                List<string> menuList = new List<string>();
+
                 int index = 0;
                 foreach (DataSnapshot r in snapshot.Children)
                 {
                     string _roomId = r.Key;
                     string _hostId = snapshot.Child(_roomId).Child("PlayerA").Value.ToString();
-                    room.roomList[index] = new Room(_roomId, _hostId);
+                    room.roomList.Add(new Room(_roomId, _hostId));
+
+                    menuList.Add(_roomId);
                     index++;
                 }
+
+                roomList.AddOptions(menuList);
             }
         });
     }
 
-    public void SendInvite(string hostId)
+    public void SendInvite(string roomId)
     {
         Dictionary<string, object> invite = new Dictionary<string, object>();
-        invite["InviteUserID"] = user.UserID;
+        invite[user.UserID] = user.UserID;
 
-        invitesDatabase.Child(hostId).UpdateChildrenAsync(invite);
+        invitesDatabase.Child(roomId).UpdateChildrenAsync(invite);
+
+        OpenListenAcceptedInvites();
     }
 
-    public void AcceptInvide(string inviteUserId)
+    public void AcceptInvite(string inviteUserId)
     {
-        invitesDatabase.Child(user.UserID).UpdateChildrenAsync(null);
+        if(room.playerId == PlayerID.PlayerA)
+        {
+            invitesDatabase.Child(user.UserID).UpdateChildrenAsync(null);
 
-        Dictionary<string, object> roomDetails = new Dictionary<string, object>();
-        roomDetails["PlayerB"] = inviteUserId;
+            Dictionary<string, object> roomDetails = new Dictionary<string, object>();
+            roomDetails["PlayerB"] = inviteUserId;
+            roomDetails["PlayerBReady"] = true;
 
-        roomsDatabase.Child(room.roomId).UpdateChildrenAsync(roomDetails);
+            roomsDatabase.Child(room.roomId).UpdateChildrenAsync(roomDetails);
+
+            room.otherUserId = inviteUserId;
+
+            RemoveAllInvites();
+
+            Dictionary<string, object> acceptedInvite = new Dictionary<string, object>();
+            acceptedInvite["RoomID"] = room.roomId;
+
+            acceptedInvitesDatabase.Child(inviteUserId).UpdateChildrenAsync(acceptedInvite);
+
+            Debug.Log("Davet kabul edildi... Oyun sahnesine yönlendiriliyorsunuz...");
+        }
     }
 
     public void JoinRoom(string roomId)
@@ -168,15 +209,30 @@ public class DBManager : Singleton<DBManager>
     public void SetResult()
     {
         Dictionary<string, object> result = new Dictionary<string, object>();
-        result["Result"] = Extensions.ResultConverter();
+        result["Result"] = Extensions.PlayerIDToStringConverter();
 
         roomsDatabase.Child(room.roomId).UpdateChildrenAsync(result);
+    }
+
+    public void SetReady()
+    {
+        Dictionary<string, object> ready = new Dictionary<string, object>();
+        if(room.playerId == PlayerID.PlayerA)
+        {
+            ready["PlayerAReady"] = true;
+        }
+        if (room.playerId == PlayerID.PlayerB)
+        {
+            ready["PlayerBReady"] = true;
+        }
+
+        roomsDatabase.Child(room.roomId).UpdateChildrenAsync(ready);
     }
 
     public void EditTurn()
     {
         Dictionary<string, object> turn = new Dictionary<string, object>();
-        turn["Turn"] = Extensions.SymbolConverter();
+        turn["Turn"] = Extensions.PlayerIDToStringConverter();
 
         roomsDatabase.Child(room.roomId).UpdateChildrenAsync(turn);
     }
@@ -189,12 +245,17 @@ public class DBManager : Singleton<DBManager>
         roomsDatabase.Child(room.roomId).Child("Board").UpdateChildrenAsync(action);
     }
 
-    public void OpenListenRoom(string roomId)
+    public void RemoveAllInvites()
     {
-        if(roomId != "")
-        {
-            FirebaseDatabase.DefaultInstance.GetReference("Rooms").Child(roomId).ValueChanged += ListenRoom;
-        }
+        invitesDatabase.Child(room.roomId).UpdateChildrenAsync(null);
+    }
+
+    public void OpenListenRoom()
+    {
+        string _roomId = room.roomId;
+        Debug.Log(_roomId);
+
+        FirebaseDatabase.DefaultInstance.GetReference("Rooms").Child(_roomId).ValueChanged += ListenRoom;
     }
 
     public void ListenRoom(object sender, ValueChangedEventArgs args)
@@ -205,16 +266,22 @@ public class DBManager : Singleton<DBManager>
             return;
         }
 
-        if (args.Snapshot.Value.ToString() != "")
-        {
-            room.Turn = Extensions.StringToPlayerIDConverter(args.Snapshot.Child("Turn").Value.ToString());
-            user.Result = Extensions.StringToPlayerIDConverter(args.Snapshot.Child("Result").ToString());
-        }
+        DataSnapshot snapshot = args.Snapshot;
+
+        Debug.Log("Değişiklik algılandı #1");
+
+        room.Turn = Extensions.StringToPlayerIDConverter(snapshot.Child("Turn").Value.ToString());
+
+        room.Result = Extensions.StringToPlayerIDConverter(snapshot.Child("Result").Value.ToString());
+
+        room.PlayerAReady = (bool)snapshot.Child("PlayerAReady").GetValue(true);
+
+        room.PlayerBReady = (bool)snapshot.Child("PlayerBReady").GetValue(true);
     }
 
     public void OpenListenInvites()
     {
-        FirebaseDatabase.DefaultInstance.GetReference("Invites").Child(user.UserID).ValueChanged += ListenInvites;
+        FirebaseDatabase.DefaultInstance.GetReference("Invites").Child(room.roomId).ValueChanged += ListenInvites;
     }
 
     public void ListenInvites(object sender, ValueChangedEventArgs args)
@@ -225,10 +292,47 @@ public class DBManager : Singleton<DBManager>
             return;
         }
 
+        Debug.Log("Değişiklik algılandı #2");
+
         foreach (DataSnapshot invite in args.Snapshot.Children)
         {
             string inviteUserId = invite.Key;
-            Debug.Log(inviteUserId);
+
+            if(user.gameState == GameState.Transaction)
+            {
+                GameObject invitedObject = Instantiate(FindObjectOfType<Transaction>().inviteObject, GameObject.Find("Canvas").transform);
+                invitedObject.GetComponent<InviteManager>().otherUserId = inviteUserId;
+            }
+        }
+    }
+
+    public void OpenListenAcceptedInvites()
+    {
+        FirebaseDatabase.DefaultInstance.GetReference("AcceptedInvites").Child(user.UserID).ValueChanged += ListenAcceptedInvites;
+    }
+
+    public void ListenAcceptedInvites(object sender, ValueChangedEventArgs args)
+    {
+        if (args.DatabaseError != null)
+        {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+
+        DataSnapshot snapshot = args.Snapshot;
+
+        Debug.Log("Değişiklik algılandı #3");
+
+        room.roomId = snapshot.Child("RoomID").Value.ToString();
+        room.playerId = PlayerID.PlayerB;
+
+        if(room.roomId != "")
+        {
+            OpenListenRoom();
+            SetReady();
+
+            Debug.Log("eşleşme sağlandı... transaction sahnesine yönlendiriliyorsunuz...");
+            SceneManager.LoadScene("Transaction");
         }
     }
 }

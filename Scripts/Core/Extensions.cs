@@ -16,13 +16,13 @@
         }
     }
 
-    public static string ResultConverter()
+    public static string PlayerIDToStringConverter()
     {
-        if(RoomData.Instance.playerId == PlayerID.PlayerA)
+        if (RoomData.Instance.playerId == PlayerID.PlayerA)
         {
             return "PlayerA";
         }
-        else if(RoomData.Instance.playerId == PlayerID.PlayerB)
+        else if (RoomData.Instance.playerId == PlayerID.PlayerB)
         {
             return "PlayerB";
         }

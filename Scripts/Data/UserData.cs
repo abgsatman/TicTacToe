@@ -6,55 +6,52 @@ public class UserData : Singleton<UserData>
 {
     #region Logic
     public bool isLogin = false;
+    public GameState gameState;
     #endregion
 
     #region General
     [SerializeField]
-    private string userId;
+    private string _userId;
     public string UserID
     {
         get
         {
-            return userId;
+            return _userId;
         }
         set
         {
-            userId = value;
+            _userId = value;
         }
     }
 
     [SerializeField]
-    private string username;
+    private string _username;
     public string Username
     {
         get
         {
-            return username;
+            return _username;
         }
         set
         {
-            username = value;
+            _username = value;
         }
     }
     #endregion
 
     #region Progression
     [SerializeField]
-    private int score;
+    private int _score;
     public int Score
     {
         get
         {
-            return score;
+            return _score;
         }
         set
         {
-            score = value;
+            _score = value;
         }
     }
-    #endregion
-
-    #region Result
-    public PlayerID Result;
     #endregion
 }
