@@ -62,7 +62,7 @@ public class RoomData : Singleton<RoomData>
         {
             if(value == true && UserData.Instance.gameState == GameState.Transaction)
             {
-                FindObjectOfType<Transaction>().playerAReadyText.text = "Player A Oyuna Hazır!";
+                FindObjectOfType<Transaction>().playerAReadyText.text = "Player A Hazır!";
                 FindObjectOfType<Transaction>().playerAReadyText.color = new Color32(65, 203, 41, 255);
             }
             _playerAReady = value;
@@ -81,7 +81,7 @@ public class RoomData : Singleton<RoomData>
         {
             if (value == true && UserData.Instance.gameState == GameState.Transaction)
             {
-                FindObjectOfType<Transaction>().playerBReadyText.text = "Player B Oyuna Hazır!";
+                FindObjectOfType<Transaction>().playerBReadyText.text = "Player B Hazır!";
                 FindObjectOfType<Transaction>().playerBReadyText.color = new Color32(65, 203, 41, 255);
             }
             _playerBReady = value;

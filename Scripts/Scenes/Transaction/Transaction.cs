@@ -32,6 +32,14 @@ public class Transaction : MonoBehaviour
         user.gameState = GameState.Transaction;
         DB.SetReady();
 
+        if(room.playerId == PlayerID.PlayerB)
+        {
+            playerAReadyText.enabled = false;
+            playerBReadyText.enabled = false;
+            readyButton.enabled = false;
+            readyButton.interactable = false;
+        }
+
         readyButton.onClick.AddListener(DoReady);
 
         StartCoroutine(CheckReadyStatus());
