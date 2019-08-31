@@ -1,4 +1,10 @@
-﻿using Firebase;
+﻿/*
+* Unity C#, Firebase: Multiplayer Oyun Altyapısı Geliştirme Udemy Eğitimi
+* Copyright (C) 2019 A.Gokhan SATMAN <abgsatman@gmail.com>
+* This file is a part of TicTacToe project.
+*/
+
+using Firebase;
 using Firebase.Database;
 using Firebase.Unity.Editor;
 using System;

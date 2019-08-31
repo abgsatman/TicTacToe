@@ -1,4 +1,10 @@
-﻿using Firebase.Auth;
+﻿/*
+* Unity C#, Firebase: Multiplayer Oyun Altyapısı Geliştirme Udemy Eğitimi
+* Copyright (C) 2019 A.Gokhan SATMAN <abgsatman@gmail.com>
+* This file is a part of TicTacToe project.
+*/
+
+using Firebase.Auth;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
