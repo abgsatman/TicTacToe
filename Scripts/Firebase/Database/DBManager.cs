@@ -49,7 +49,7 @@ public class DBManager : Singleton<DBManager>
 
                 if(auth.auth.CurrentUser != null)
                 {
-                    auth.AutoLogin();
+                    auth.AutoLogin(auth.auth.CurrentUser.UserId);
                 }
                 else
                 {
@@ -114,17 +114,28 @@ public class DBManager : Singleton<DBManager>
         string roomId = roomsDatabase.Push().Key;
         room.roomId = roomId;
 
+        Dictionary<string, object> boards = new Dictionary<string, object>();
+        boards["s1"] = "";
+        boards["s2"] = "";
+        boards["s3"] = "";
+        boards["s4"] = "";
+        boards["s5"] = "";
+        boards["s6"] = "";
+        boards["s7"] = "";
+        boards["s8"] = "";
+        boards["s9"] = "";
+
         Dictionary<string, object> roomDetails = new Dictionary<string, object>();
         roomDetails["PlayerA"] = user.UserID;
         roomDetails["PlayerB"] = "none";
         roomDetails["Result"] = "none";
         roomDetails["PlayerAReady"] = false;
         roomDetails["PlayerBReady"] = false;
-        roomDetails["Turn"] = "PlayerA";
+        roomDetails["Board"] = boards;
 
-        roomsDatabase.Child(roomId).UpdateChildrenAsync(roomDetails);
+        roomsDatabase.Child(room.roomId).UpdateChildrenAsync(roomDetails);
 
-        room.playerId = PlayerID.PlayerA;
+        room.playerId = "PlayerA";
 
         OpenListenRoom();
         OpenListenInvites();
@@ -175,19 +186,15 @@ public class DBManager : Singleton<DBManager>
 
     public void AcceptInvite(string inviteUserId)
     {
-        if(room.playerId == PlayerID.PlayerA)
+        if(room.playerId =="PlayerA" && room.roomId != "")
         {
-            invitesDatabase.Child(user.UserID).UpdateChildrenAsync(null);
-
             Dictionary<string, object> roomDetails = new Dictionary<string, object>();
             roomDetails["PlayerB"] = inviteUserId;
             roomDetails["PlayerBReady"] = true;
 
             roomsDatabase.Child(room.roomId).UpdateChildrenAsync(roomDetails);
 
-            room.otherUserId = inviteUserId;
-
-            RemoveAllInvites();
+            room.OtherUserId = inviteUserId;
 
             Dictionary<string, object> acceptedInvite = new Dictionary<string, object>();
             acceptedInvite["RoomID"] = room.roomId;
@@ -198,18 +205,17 @@ public class DBManager : Singleton<DBManager>
         }
     }
 
-    public void JoinRoom(string roomId)
-    {
-        Dictionary<string, object> playerB = new Dictionary<string, object>();
-        playerB["PlayerB"] = user.UserID;
-
-        roomsDatabase.Child(room.roomId).UpdateChildrenAsync(playerB);
-    }
-
     public void SetResult()
     {
         Dictionary<string, object> result = new Dictionary<string, object>();
-        result["Result"] = Extensions.PlayerIDToStringConverter();
+        if (room.playerId == "PlayerA")
+        {
+            result["Result"] = "PlayerA";
+        }
+        if (room.playerId == "PlayerB")
+        {
+            result["Result"] = "PlayerB";
+        }
 
         roomsDatabase.Child(room.roomId).UpdateChildrenAsync(result);
     }
@@ -217,11 +223,11 @@ public class DBManager : Singleton<DBManager>
     public void SetReady()
     {
         Dictionary<string, object> ready = new Dictionary<string, object>();
-        if(room.playerId == PlayerID.PlayerA)
+        if(room.playerId == "PlayerA")
         {
             ready["PlayerAReady"] = true;
         }
-        if (room.playerId == PlayerID.PlayerB)
+        if (room.playerId == "PlayerB")
         {
             ready["PlayerBReady"] = true;
         }
@@ -229,33 +235,24 @@ public class DBManager : Singleton<DBManager>
         roomsDatabase.Child(room.roomId).UpdateChildrenAsync(ready);
     }
 
-    public void EditTurn()
-    {
-        Dictionary<string, object> turn = new Dictionary<string, object>();
-        turn["Turn"] = Extensions.PlayerIDToStringConverter();
-
-        roomsDatabase.Child(room.roomId).UpdateChildrenAsync(turn);
-    }
-
-    public void DoAction(Positions p)
+    public void DoAction(string p)
     {
         Dictionary<string, object> action = new Dictionary<string, object>();
-        action[p.ToString()] = Extensions.SymbolConverter();
+        if (room.playerId == "PlayerA")
+        {
+            action[p] = "X";
+        }
+        if (room.playerId == "PlayerB")
+        {
+            action[p] = "O";
+        }
 
         roomsDatabase.Child(room.roomId).Child("Board").UpdateChildrenAsync(action);
     }
 
-    public void RemoveAllInvites()
-    {
-        invitesDatabase.Child(room.roomId).UpdateChildrenAsync(null);
-    }
-
     public void OpenListenRoom()
     {
-        string _roomId = room.roomId;
-        Debug.Log(_roomId);
-
-        FirebaseDatabase.DefaultInstance.GetReference("Rooms").Child(_roomId).ValueChanged += ListenRoom;
+        roomsDatabase.Child(room.roomId).ValueChanged += ListenRoom;
     }
 
     public void ListenRoom(object sender, ValueChangedEventArgs args)
@@ -266,17 +263,39 @@ public class DBManager : Singleton<DBManager>
             return;
         }
 
-        DataSnapshot snapshot = args.Snapshot;
+        var snapshot = args.Snapshot;
 
         Debug.Log("Değişiklik algılandı #1");
+  
+        room.Result = snapshot.Child("Result").Value.ToString();
 
-        room.Turn = Extensions.StringToPlayerIDConverter(snapshot.Child("Turn").Value.ToString());
+        if (room.playerId == "PlayerA")
+            room.OtherUserId = snapshot.Child("PlayerB").Value.ToString();
 
-        room.Result = Extensions.StringToPlayerIDConverter(snapshot.Child("Result").Value.ToString());
+        if (room.playerId == "PlayerB")
+            room.OtherUserId = snapshot.Child("PlayerA").Value.ToString();
 
-        room.PlayerAReady = (bool)snapshot.Child("PlayerAReady").GetValue(true);
+        if(user.gameState != GameState.Gameplay)
+        {
+            room.PlayerAReady = (bool)snapshot.Child("PlayerAReady").GetValue(true);
+            room.PlayerBReady = (bool)snapshot.Child("PlayerBReady").GetValue(true);
+        }
 
-        room.PlayerBReady = (bool)snapshot.Child("PlayerBReady").GetValue(true);
+        //Board positions for 9 sections
+        board.S1 = snapshot.Child("Board").Child("s1").Value.ToString();
+        board.S2 = snapshot.Child("Board").Child("s2").Value.ToString();
+        board.S3 = snapshot.Child("Board").Child("s3").Value.ToString();
+        board.S4 = snapshot.Child("Board").Child("s4").Value.ToString();
+        board.S5 = snapshot.Child("Board").Child("s5").Value.ToString();
+        board.S6 = snapshot.Child("Board").Child("s6").Value.ToString();
+        board.S7 = snapshot.Child("Board").Child("s7").Value.ToString();
+        board.S8 = snapshot.Child("Board").Child("s8").Value.ToString();
+        board.S9 = snapshot.Child("Board").Child("s9").Value.ToString();
+    }
+
+    public void CloseListenRoom()
+    {
+        FirebaseDatabase.DefaultInstance.GetReference("Rooms").Child(room.roomId).ValueChanged -= ListenRoom;
     }
 
     public void OpenListenInvites()
@@ -306,6 +325,11 @@ public class DBManager : Singleton<DBManager>
         }
     }
 
+    public void CloseListenInvites()
+    {
+        FirebaseDatabase.DefaultInstance.GetReference("Invites").Child(room.roomId).ValueChanged -= ListenInvites;
+    }
+
     public void OpenListenAcceptedInvites()
     {
         FirebaseDatabase.DefaultInstance.GetReference("AcceptedInvites").Child(user.UserID).ValueChanged += ListenAcceptedInvites;
@@ -323,16 +347,28 @@ public class DBManager : Singleton<DBManager>
 
         Debug.Log("Değişiklik algılandı #3");
 
-        room.roomId = snapshot.Child("RoomID").Value.ToString();
-        room.playerId = PlayerID.PlayerB;
-
-        if(room.roomId != "")
+        if (snapshot.HasChild("RoomID"))
         {
-            OpenListenRoom();
-            SetReady();
+            string _roomId = snapshot.Child("RoomID").Value.ToString();
+            room.roomId = _roomId;
 
-            Debug.Log("eşleşme sağlandı... transaction sahnesine yönlendiriliyorsunuz...");
-            SceneManager.LoadScene("Transaction");
+            room.playerId = "PlayerB";
+
+            if (room.roomId != "")
+            {
+                CloseListenAcceptedInvites();
+                Debug.Log("eşleşme sağlandı... transaction sahnesine yönlendiriliyorsunuz...");
+                SceneManager.LoadScene("Transaction");
+            }
         }
+        else
+        {
+            Debug.Log("roomId yok");
+        }
+    }
+
+    public void CloseListenAcceptedInvites()
+    {
+        FirebaseDatabase.DefaultInstance.GetReference("AcceptedInvites").Child(user.UserID).ValueChanged -= ListenAcceptedInvites;
     }
 }

@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class Lobby : MonoBehaviour
 {
     private DBManager DB;
-    private AuthManager auth;
 
     public Dropdown gameListForm;
     public Button joinRoom;
@@ -19,7 +18,6 @@ public class Lobby : MonoBehaviour
     void Start()
     {
         DB = DBManager.Instance;
-        auth = AuthManager.Instance;
         user = UserData.Instance;
 
         user.gameState = GameState.Lobby;

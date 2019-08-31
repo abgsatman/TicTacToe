@@ -6,11 +6,20 @@ using UnityEngine.UI;
 public class Gameplay : MonoBehaviour
 {
     public Text NoticeText;
-    
-    // Start is called before the first frame update
+
+    private UserData user;
+    private DBManager DB;
+
     void Start()
     {
+        user = UserData.Instance;
+        DB = DBManager.Instance;
+
+        user.gameState = GameState.Gameplay;
+
+        //DB.CloseListenAcceptedInvites();
+        DB.CloseListenInvites();
+
         NoticeText.text = RoomData.Instance.roomId;
     }
-
 }

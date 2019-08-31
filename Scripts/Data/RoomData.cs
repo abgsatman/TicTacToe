@@ -6,35 +6,39 @@ public class RoomData : Singleton<RoomData>
 {
     #region General
     public string roomId;
-    public PlayerID playerId;
+    public string playerId;
     #endregion
 
     #region OpponentInformation
-    public string otherUserId;
+    [SerializeField]
+    private string _otherUserId;
+    public string OtherUserId
+    {
+        get
+        {
+            return _otherUserId;
+        }
+        set
+        {
+            if(value != _otherUserId)
+            {
+                _otherUserId = value;
+            }
+        }
+    }
+
     public string otherUsername;
     public int otherScore;
     #endregion
 
     #region Gameplay
-    [SerializeField]
-    private PlayerID _turn;
-    public PlayerID Turn
-    {
-        get
-        {
-            return _turn;
-        }
-        set
-        {
-            _turn = value;
-        }
-    }
+    public string turn = "PlayerA";
     #endregion
 
     #region Result
     [SerializeField]
-    private PlayerID _result;
-    public PlayerID Result
+    private string _result;
+    public string Result
     {
         get
         {
@@ -42,7 +46,10 @@ public class RoomData : Singleton<RoomData>
         }
         set
         {
-            _result = value;
+            if(value != _result && UserData.Instance.gameState == GameState.Gameplay)
+            {
+                _result = value;
+            }
         }
     }
     #endregion
@@ -60,12 +67,12 @@ public class RoomData : Singleton<RoomData>
         }
         set
         {
-            if(value == true && UserData.Instance.gameState == GameState.Transaction)
+            if (value != _playerAReady && value == true && UserData.Instance.gameState == GameState.Transaction)
             {
                 FindObjectOfType<Transaction>().playerAReadyText.text = "Player A Hazır!";
                 FindObjectOfType<Transaction>().playerAReadyText.color = new Color32(65, 203, 41, 255);
+                _playerAReady = value;
             }
-            _playerAReady = value;
         }
     }
 
@@ -79,12 +86,12 @@ public class RoomData : Singleton<RoomData>
         }
         set
         {
-            if (value == true && UserData.Instance.gameState == GameState.Transaction)
+            if (value != _playerBReady && value == true && UserData.Instance.gameState == GameState.Transaction)
             {
                 FindObjectOfType<Transaction>().playerBReadyText.text = "Player B Hazır!";
                 FindObjectOfType<Transaction>().playerBReadyText.color = new Color32(65, 203, 41, 255);
+                _playerBReady = value;
             }
-            _playerBReady = value;
         }
     }
     #endregion

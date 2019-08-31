@@ -2,18 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AuthManager : Singleton<AuthManager>
 {
     public FirebaseAuth auth;
 
     public DBManager DB;
+
+    public UserData user;
     
     void Start()
     {
         auth = FirebaseAuth.DefaultInstance;
 
         DB = DBManager.Instance;
+        user = UserData.Instance;
     }
 
     public void Signup(string username, string email, string password)
@@ -54,8 +58,12 @@ public class AuthManager : Singleton<AuthManager>
         });
     }
 
-    public void AutoLogin()
+    public void AutoLogin(string userId)
     {
         Debug.Log("Auto Login...");
+        FirebaseUser firebaseUser = auth.CurrentUser;
+        user.UserID = userId;
+
+        SceneManager.LoadScene("Lobby");
     }
 }

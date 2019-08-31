@@ -9,8 +9,6 @@ public class Transaction : MonoBehaviour
     private DBManager DB;
     private AuthManager auth;
 
-    public Button readyButton;
-
     private UserData user;
     private RoomData room;
 
@@ -32,22 +30,16 @@ public class Transaction : MonoBehaviour
         user.gameState = GameState.Transaction;
         DB.SetReady();
 
-        if(room.playerId == PlayerID.PlayerB)
+        if(room.playerId == "PlayerB")
         {
+            DB.OpenListenRoom();
+            DB.CloseListenAcceptedInvites();
+
             playerAReadyText.enabled = false;
             playerBReadyText.enabled = false;
-            readyButton.enabled = false;
-            readyButton.interactable = false;
         }
 
-        readyButton.onClick.AddListener(DoReady);
-
         StartCoroutine(CheckReadyStatus());
-    }
-
-    void DoReady()
-    {
-        DB.SetReady();
     }
 
     IEnumerator CheckReadyStatus()

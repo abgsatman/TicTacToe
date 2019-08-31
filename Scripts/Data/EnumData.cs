@@ -8,17 +8,20 @@
     s6,
     s7,
     s8,
-    s9
+    s9,
+    none
 }
 
 public enum Symbols
 {
+    none,
     X,
     O
 }
 
 public enum PlayerID
 {
+    none,
     PlayerA,
     PlayerB
 }
