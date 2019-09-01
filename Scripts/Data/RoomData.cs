@@ -93,12 +93,12 @@ public class RoomData : Singleton<RoomData>
         set
         {
             _turn = value;
-            if (value == "PlayerA")
+            if (value == "PlayerA" && UserData.Instance.gameState == GameState.Gameplay)
             {
                 FindObjectOfType<Gameplay>().playerATurn.enabled = true;
                 FindObjectOfType<Gameplay>().playerBTurn.enabled = false;
             }
-            else if (value == "PlayerB")
+            else if (value == "PlayerB" && UserData.Instance.gameState == GameState.Gameplay)
             {
                 FindObjectOfType<Gameplay>().playerATurn.enabled = false;
                 FindObjectOfType<Gameplay>().playerBTurn.enabled = true;

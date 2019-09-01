@@ -11,13 +11,11 @@ using UnityEngine;
 public class UserData : Singleton<UserData>
 {
     #region Logic
-    public bool isLogin = false;
     public GameState gameState;
     #endregion
 
     #region General
     public string userId;
-
     public string username;
     #endregion
 

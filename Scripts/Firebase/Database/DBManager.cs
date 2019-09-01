@@ -213,17 +213,32 @@ public class DBManager : Singleton<DBManager>
         }
     }
 
-    public void SetResult()
+    public void SetResult(bool type = false)
     {
         Dictionary<string, object> result = new Dictionary<string, object>();
-        if (room.playerId == "PlayerA")
+        if(type == false)
         {
-            result["Result"] = "PlayerB";
+            if (room.playerId == "PlayerA")
+            {
+                result["Result"] = "PlayerB";
+            }
+            if (room.playerId == "PlayerB")
+            {
+                result["Result"] = "PlayerA";
+            }
         }
-        if (room.playerId == "PlayerB")
+        else
         {
-            result["Result"] = "PlayerA";
+            if (room.playerId == "PlayerA")
+            {
+                result["Result"] = "PlayerA";
+            }
+            if (room.playerId == "PlayerB")
+            {
+                result["Result"] = "PlayerB";
+            }
         }
+        
 
         roomsDatabase.Child(room.roomId).UpdateChildrenAsync(result);
     }
@@ -241,6 +256,26 @@ public class DBManager : Singleton<DBManager>
         }
 
         roomsDatabase.Child(room.roomId).UpdateChildrenAsync(ready);
+    }
+
+    public void EditScore()
+    {
+        int score = user.score;
+        score++;
+        int newScore = score;
+        Dictionary<string, object> scoreParam = new Dictionary<string, object>();
+        scoreParam["Score"] = newScore;
+
+        usersDatabase.Child(user.userId).Child("Progression").UpdateChildrenAsync(scoreParam).ContinueWith(task => {
+            if(task.IsFaulted)
+            {
+                Debug.Log("faulted");
+            }
+            else if(task.IsCompleted)
+            {
+                user.score = newScore;
+            }
+        });
     }
 
     public void DoAction(string p)
@@ -282,13 +317,22 @@ public class DBManager : Singleton<DBManager>
     public void RemoveAllInvites()
     {
         if(room.playerId == "PlayerA")
-            invitesDatabase.Child(room.roomId).UpdateChildrenAsync(null);
+        {
+            invitesDatabase.Child(room.roomId).RemoveValueAsync();
+        } 
     }
 
     public void RemoveAllAcceptedInvites()
     {
         if(room.playerId == "PlayerB")
-            acceptedInvitesDatabase.Child(user.userId).UpdateChildrenAsync(null);
+        {
+            acceptedInvitesDatabase.Child(user.userId).RemoveValueAsync();
+        }
+    }
+
+    public void RemoveRoom()
+    {
+        roomsDatabase.Child(room.roomId).RemoveValueAsync();
     }
 
     public void OpenListenRoom()
@@ -307,8 +351,9 @@ public class DBManager : Singleton<DBManager>
         var snapshot = args.Snapshot;
 
         Debug.Log("Değişiklik algılandı #1");
-  
-        room.Result = snapshot.Child("Result").Value.ToString();
+
+        if (user.gameState == GameState.Gameplay)
+            room.Result = snapshot.Child("Result").Value.ToString();
 
         if (room.playerId == "PlayerA")
             room.OtherUserId = snapshot.Child("PlayerB").Value.ToString();
@@ -332,6 +377,9 @@ public class DBManager : Singleton<DBManager>
         board.S7 = snapshot.Child("Board").Child("s7").Value.ToString();
         board.S8 = snapshot.Child("Board").Child("s8").Value.ToString();
         board.S9 = snapshot.Child("Board").Child("s9").Value.ToString();
+
+        if(user.gameState == GameState.Gameplay)
+            FindObjectOfType<Gameplay>().CheckTourConditions();
     }
 
     public void CloseListenRoom()

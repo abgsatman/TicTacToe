@@ -1044,6 +1044,8 @@ MonoBehaviour:
   playerBScore: {fileID: 716288523}
   playerATurn: {fileID: 1004207901}
   playerBTurn: {fileID: 2081761277}
+  X1: {fileID: 3856737228689728255, guid: 01bf639f892f23745a2c061635250428, type: 3}
+  O1: {fileID: 3126721729379650699, guid: eafed321c614efb40a0d022009caaafb, type: 3}
 --- !u!1 &716288521
 GameObject:
   m_ObjectHideFlags: 0
