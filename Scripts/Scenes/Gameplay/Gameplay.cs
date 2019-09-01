@@ -14,18 +14,50 @@ public class Gameplay : MonoBehaviour
     public Text NoticeText;
 
     private UserData user;
+    private RoomData room;
     private DBManager DB;
+
+    public Text playerAUsername;
+    public Text playerBUsername;
+
+    public Text playerAScore;
+    public Text playerBScore;
+
+    public Image playerATurn;
+    public Image playerBTurn;
 
     void Start()
     {
         user = UserData.Instance;
+        room = RoomData.Instance;
         DB = DBManager.Instance;
 
         user.gameState = GameState.Gameplay;
 
-        //DB.CloseListenAcceptedInvites();
+        DB.GetOtherUserInformation();
+
         DB.CloseListenInvites();
 
-        NoticeText.text = RoomData.Instance.roomId;
+        NoticeText.text = "Siz: " + user.username;
+
+        if (room.playerId == "PlayerA")
+            DB.RemoveAllInvites();
+
+        if (room.playerId == "PlayerB")
+            DB.RemoveAllAcceptedInvites();
+    }
+
+    private void Update()
+    {
+        if(room.playerId == "PlayerA")
+        {
+            playerAUsername.text = user.username;
+            playerAScore.text = user.score.ToString();
+        }
+        if (room.playerId == "PlayerB")
+        {
+            playerBUsername.text = user.username;
+            playerBScore.text = user.score.ToString();
+        }
     }
 }

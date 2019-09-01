@@ -26,19 +26,85 @@ public class RoomData : Singleton<RoomData>
         }
         set
         {
-            if(value != _otherUserId)
+            _otherUserId = value;
+        }
+    }
+
+    [SerializeField]
+    private string _otherUsername;
+    public string OtherUsername
+    {
+        get
+        {
+            return _otherUsername;
+        }
+        set
+        {
+            _otherUsername = value;
+            if(UserData.Instance.gameState == GameState.Gameplay)
             {
-                _otherUserId = value;
+                if (playerId == "PlayerA")
+                {
+                    FindObjectOfType<Gameplay>().playerBUsername.text = OtherUsername;
+                }
+                else if (playerId == "PlayerB")
+                {
+                    FindObjectOfType<Gameplay>().playerAUsername.text = OtherUsername;
+                }
             }
         }
     }
 
-    public string otherUsername;
-    public int otherScore;
+    [SerializeField]
+    private int _otherScore;
+    public int OtherScore
+    {
+        get
+        {
+            return _otherScore;
+        }
+        set
+        {
+            _otherScore = value;
+            if (UserData.Instance.gameState == GameState.Gameplay)
+            {
+                if (playerId == "PlayerA")
+                {
+                    FindObjectOfType<Gameplay>().playerBScore.text = OtherScore.ToString();
+                }
+                else if (playerId == "PlayerB")
+                {
+                    FindObjectOfType<Gameplay>().playerAScore.text = OtherScore.ToString();
+                }
+            }
+        }
+    }
     #endregion
 
     #region Gameplay
-    public string turn = "PlayerA";
+    [SerializeField]
+    private string _turn = "PlayerA";
+    public string Turn
+    {
+        get
+        {
+            return _turn;
+        }
+        set
+        {
+            _turn = value;
+            if (value == "PlayerA")
+            {
+                FindObjectOfType<Gameplay>().playerATurn.enabled = true;
+                FindObjectOfType<Gameplay>().playerBTurn.enabled = false;
+            }
+            else if (value == "PlayerB")
+            {
+                FindObjectOfType<Gameplay>().playerATurn.enabled = false;
+                FindObjectOfType<Gameplay>().playerBTurn.enabled = true;
+            }
+        }
+    }
     #endregion
 
     #region Result
@@ -52,10 +118,11 @@ public class RoomData : Singleton<RoomData>
         }
         set
         {
-            if(value != _result && UserData.Instance.gameState == GameState.Gameplay)
+            if(_result == value)
             {
-                _result = value;
+                return;
             }
+            _result = value;
         }
     }
     #endregion
@@ -73,11 +140,15 @@ public class RoomData : Singleton<RoomData>
         }
         set
         {
-            if (value != _playerAReady && value == true && UserData.Instance.gameState == GameState.Transaction)
+            if(_playerAReady == value)
+            {
+                return;
+            }
+            _playerAReady = value;
+            if (value == true && UserData.Instance.gameState == GameState.Transaction)
             {
                 FindObjectOfType<Transaction>().playerAReadyText.text = "Player A Hazır!";
                 FindObjectOfType<Transaction>().playerAReadyText.color = new Color32(65, 203, 41, 255);
-                _playerAReady = value;
             }
         }
     }
@@ -92,11 +163,15 @@ public class RoomData : Singleton<RoomData>
         }
         set
         {
-            if (value != _playerBReady && value == true && UserData.Instance.gameState == GameState.Transaction)
+            if(_playerBReady == value)
+            {
+                return;
+            }
+            _playerBReady = value;
+            if (value == true && UserData.Instance.gameState == GameState.Transaction)
             {
                 FindObjectOfType<Transaction>().playerBReadyText.text = "Player B Hazır!";
                 FindObjectOfType<Transaction>().playerBReadyText.color = new Color32(65, 203, 41, 255);
-                _playerBReady = value;
             }
         }
     }

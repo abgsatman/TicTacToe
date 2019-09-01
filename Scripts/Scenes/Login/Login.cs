@@ -16,14 +16,12 @@ public class Login : MonoBehaviour
 
     public Button loginButtonForm;
 
-    private DBManager DB;
     private AuthManager auth;
 
     private UserData user;
     
     void Start()
     {
-        DB = DBManager.Instance;
         auth = AuthManager.Instance;
         user = UserData.Instance;
 

@@ -17,7 +17,6 @@ public class GameController : MonoBehaviour
 
     private DBManager DB;
 
-    private UserData user;
     private RoomData room;
 
     public bool status = false;
@@ -25,17 +24,16 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         DB = DBManager.Instance;
-        user = UserData.Instance;
         room = RoomData.Instance;
     }
 
     public void DoAction()
     {
-        if (room.playerId == "PlayerA" && room.turn == "PlayerA" && !status)
+        if (room.playerId == "PlayerA" && room.Turn == "PlayerA" && !status)
         {
             DB.DoAction(this.gameObject.name);
         }
-        else if (room.playerId == "PlayerB" && room.turn == "PlayerB" && !status)
+        else if (room.playerId == "PlayerB" && room.Turn == "PlayerB" && !status)
         {
             DB.DoAction(this.gameObject.name);
         }

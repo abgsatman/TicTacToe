@@ -78,11 +78,11 @@ public class DBManager : Singleton<DBManager>
         Dictionary<string, object> progression = new Dictionary<string, object>();
         progression["Score"] = 0;
 
-        usersDatabase.Child(user.UserID).Child("General").UpdateChildrenAsync(general);
-        user.Username = username;
+        usersDatabase.Child(user.userId).Child("General").UpdateChildrenAsync(general);
+        user.username = username;
 
-        usersDatabase.Child(user.UserID).Child("Progression").UpdateChildrenAsync(progression);
-        user.Score = 0;
+        usersDatabase.Child(user.userId).Child("Progression").UpdateChildrenAsync(progression);
+        user.score = 0;
 
         Debug.Log("Kullanıcı başarıyla oluşturuldu, login sahnesine yönlendiriliyorsunuz...");
 
@@ -91,7 +91,7 @@ public class DBManager : Singleton<DBManager>
 
     public void GetUserInformation()
     {
-        usersDatabase.Child(user.UserID).GetValueAsync().ContinueWith(task =>
+        usersDatabase.Child(user.userId).GetValueAsync().ContinueWith(task =>
         {
             if(task.IsFaulted)
             {
@@ -105,8 +105,8 @@ public class DBManager : Singleton<DBManager>
                 string username = snapshot.Child("General").Child("Username").Value.ToString();
                 int score = int.Parse(snapshot.Child("Progression").Child("Score").Value.ToString());
 
-                user.Username = username;
-                user.Score = score;
+                user.username = username;
+                user.score = score;
 
                 Debug.Log("Kullanıcı login oldu ve bilgileri çekildi, lobby sahnesine yönlendiriliyorsunuz...");
 
@@ -132,7 +132,7 @@ public class DBManager : Singleton<DBManager>
         boards["s9"] = "";
 
         Dictionary<string, object> roomDetails = new Dictionary<string, object>();
-        roomDetails["PlayerA"] = user.UserID;
+        roomDetails["PlayerA"] = user.userId;
         roomDetails["PlayerB"] = "none";
         roomDetails["Result"] = "none";
         roomDetails["PlayerAReady"] = false;
@@ -183,7 +183,7 @@ public class DBManager : Singleton<DBManager>
     public void SendInvite(string roomId)
     {
         Dictionary<string, object> invite = new Dictionary<string, object>();
-        invite[user.UserID] = user.UserID;
+        invite[user.userId] = user.userId;
 
         invitesDatabase.Child(roomId).UpdateChildrenAsync(invite);
 
@@ -206,6 +206,8 @@ public class DBManager : Singleton<DBManager>
             acceptedInvite["RoomID"] = room.roomId;
 
             acceptedInvitesDatabase.Child(inviteUserId).UpdateChildrenAsync(acceptedInvite);
+
+            GetOtherUserInformation();
 
             Debug.Log("Davet kabul edildi... Oyun sahnesine yönlendiriliyorsunuz...");
         }
@@ -254,6 +256,39 @@ public class DBManager : Singleton<DBManager>
         }
 
         roomsDatabase.Child(room.roomId).Child("Board").UpdateChildrenAsync(action);
+    }
+
+    public void GetOtherUserInformation()
+    {
+        Debug.Log("GetOtherUserInformation methodu çalıştı!");
+        usersDatabase.Child(room.OtherUserId).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsFaulted)
+            {
+                Debug.Log("faulted");
+            }
+            else if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                room.OtherUsername = snapshot.Child("General").Child("Username").Value.ToString();
+                string _otherScore = snapshot.Child("Progression").Child("Score").Value.ToString();
+                room.OtherScore = int.Parse(_otherScore);
+
+                Debug.Log("Rakip bilgileri: " + room.OtherUsername + "-" + room.OtherScore);
+            }
+        });
+    }
+
+    public void RemoveAllInvites()
+    {
+        if(room.playerId == "PlayerA")
+            invitesDatabase.Child(room.roomId).UpdateChildrenAsync(null);
+    }
+
+    public void RemoveAllAcceptedInvites()
+    {
+        if(room.playerId == "PlayerB")
+            acceptedInvitesDatabase.Child(user.userId).UpdateChildrenAsync(null);
     }
 
     public void OpenListenRoom()
@@ -338,7 +373,7 @@ public class DBManager : Singleton<DBManager>
 
     public void OpenListenAcceptedInvites()
     {
-        FirebaseDatabase.DefaultInstance.GetReference("AcceptedInvites").Child(user.UserID).ValueChanged += ListenAcceptedInvites;
+        FirebaseDatabase.DefaultInstance.GetReference("AcceptedInvites").Child(user.userId).ValueChanged += ListenAcceptedInvites;
     }
 
     public void ListenAcceptedInvites(object sender, ValueChangedEventArgs args)
@@ -362,7 +397,7 @@ public class DBManager : Singleton<DBManager>
 
             if (room.roomId != "")
             {
-                CloseListenAcceptedInvites();
+                //CloseListenAcceptedInvites();
                 Debug.Log("eşleşme sağlandı... transaction sahnesine yönlendiriliyorsunuz...");
                 SceneManager.LoadScene("Transaction");
             }
@@ -375,6 +410,6 @@ public class DBManager : Singleton<DBManager>
 
     public void CloseListenAcceptedInvites()
     {
-        FirebaseDatabase.DefaultInstance.GetReference("AcceptedInvites").Child(user.UserID).ValueChanged -= ListenAcceptedInvites;
+        FirebaseDatabase.DefaultInstance.GetReference("AcceptedInvites").Child(user.userId).ValueChanged -= ListenAcceptedInvites;
     }
 }

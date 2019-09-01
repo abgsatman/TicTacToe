@@ -39,7 +39,7 @@ public class AuthManager : Singleton<AuthManager>
                 return;
             }
             FirebaseUser newUser = task.Result;
-            DB.user.UserID = newUser.UserId;
+            DB.user.userId = newUser.UserId;
             DB.CreateUser(username);
         });
     }
@@ -59,7 +59,7 @@ public class AuthManager : Singleton<AuthManager>
                 return;
             }
             FirebaseUser newUser = task.Result;
-            DB.user.UserID = newUser.UserId;
+            DB.user.userId = newUser.UserId;
             DB.GetUserInformation();
         });
     }
@@ -68,7 +68,9 @@ public class AuthManager : Singleton<AuthManager>
     {
         Debug.Log("Auto Login...");
         FirebaseUser firebaseUser = auth.CurrentUser;
-        user.UserID = userId;
+        user.userId = userId;
+
+        DB.GetUserInformation();
 
         SceneManager.LoadScene("Lobby");
     }

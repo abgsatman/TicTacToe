@@ -16,48 +16,12 @@ public class UserData : Singleton<UserData>
     #endregion
 
     #region General
-    [SerializeField]
-    private string _userId;
-    public string UserID
-    {
-        get
-        {
-            return _userId;
-        }
-        set
-        {
-            _userId = value;
-        }
-    }
+    public string userId;
 
-    [SerializeField]
-    private string _username;
-    public string Username
-    {
-        get
-        {
-            return _username;
-        }
-        set
-        {
-            _username = value;
-        }
-    }
+    public string username;
     #endregion
 
     #region Progression
-    [SerializeField]
-    private int _score;
-    public int Score
-    {
-        get
-        {
-            return _score;
-        }
-        set
-        {
-            _score = value;
-        }
-    }
+    public int score;
     #endregion
 }

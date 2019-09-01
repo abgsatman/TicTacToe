@@ -13,7 +13,6 @@ using UnityEngine.UI;
 public class Transaction : MonoBehaviour
 {
     private DBManager DB;
-    private AuthManager auth;
 
     private UserData user;
     private RoomData room;
@@ -28,7 +27,6 @@ public class Transaction : MonoBehaviour
     private void Start()
     {
         DB = DBManager.Instance;
-        auth = AuthManager.Instance;
 
         user = UserData.Instance;
         room = RoomData.Instance;
@@ -51,6 +49,7 @@ public class Transaction : MonoBehaviour
     IEnumerator CheckReadyStatus()
     {
         yield return new WaitUntil(() => room.PlayerAReady && room.PlayerBReady);
+
         noticeText.text = "Oyun yükleniyor..... Lütfen bekleyin...";
         yield return new WaitForSeconds(3);
         SceneManager.LoadScene("Gameplay");

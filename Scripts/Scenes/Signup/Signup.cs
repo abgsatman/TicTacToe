@@ -17,14 +17,12 @@ public class Signup : MonoBehaviour
 
     public Button signupButtonForm;
 
-    private DBManager DB;
     private AuthManager auth;
 
     private UserData user;
 
     void Start()
     {
-        DB = DBManager.Instance;
         auth = AuthManager.Instance;
         user = UserData.Instance;
 

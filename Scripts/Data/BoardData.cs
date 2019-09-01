@@ -25,12 +25,12 @@ public class BoardData : Singleton<BoardData>
                 if(value == "X")
                 {
                     Instantiate(GameObject.Find("s1").GetComponent<GameController>().X, GameObject.Find("s1").transform);
-                    RoomData.Instance.turn = "PlayerB";
+                    RoomData.Instance.Turn = "PlayerB";
                 }
                 else if(value == "O")
                 {
                     Instantiate(GameObject.Find("s1").GetComponent<GameController>().O, GameObject.Find("s1").transform);
-                    RoomData.Instance.turn = "PlayerA";
+                    RoomData.Instance.Turn = "PlayerA";
                 }
                 GameObject.Find("s1").GetComponent<GameController>().status = true;
             }
@@ -53,12 +53,12 @@ public class BoardData : Singleton<BoardData>
                 if (value == "X")
                 {
                     Instantiate(GameObject.Find("s2").GetComponent<GameController>().X, GameObject.Find("s2").transform);
-                    RoomData.Instance.turn = "PlayerB";
+                    RoomData.Instance.Turn = "PlayerB";
                 }
                 else if (value == "O")
                 {
                     Instantiate(GameObject.Find("s2").GetComponent<GameController>().O, GameObject.Find("s2").transform);
-                    RoomData.Instance.turn = "PlayerA";
+                    RoomData.Instance.Turn = "PlayerA";
                 }
                 GameObject.Find("s2").GetComponent<GameController>().status = true;
             }
@@ -81,12 +81,12 @@ public class BoardData : Singleton<BoardData>
                 if (value == "X")
                 {
                     Instantiate(GameObject.Find("s3").GetComponent<GameController>().X, GameObject.Find("s3").transform);
-                    RoomData.Instance.turn = "PlayerB";
+                    RoomData.Instance.Turn = "PlayerB";
                 }
                 else if (value == "O")
                 {
                     Instantiate(GameObject.Find("s3").GetComponent<GameController>().O, GameObject.Find("s3").transform);
-                    RoomData.Instance.turn = "PlayerA";
+                    RoomData.Instance.Turn = "PlayerA";
                 }
                 GameObject.Find("s3").GetComponent<GameController>().status = true;
             }
@@ -109,12 +109,12 @@ public class BoardData : Singleton<BoardData>
                 if (value == "X")
                 {
                     Instantiate(GameObject.Find("s4").GetComponent<GameController>().X, GameObject.Find("s4").transform);
-                    RoomData.Instance.turn = "PlayerB";
+                    RoomData.Instance.Turn = "PlayerB";
                 }
                 else if (value == "O")
                 {
                     Instantiate(GameObject.Find("s4").GetComponent<GameController>().O, GameObject.Find("s4").transform);
-                    RoomData.Instance.turn = "PlayerA";
+                    RoomData.Instance.Turn = "PlayerA";
                 }
                 GameObject.Find("s4").GetComponent<GameController>().status = true;
             }
@@ -137,12 +137,12 @@ public class BoardData : Singleton<BoardData>
                 if (value == "X")
                 {
                     Instantiate(GameObject.Find("s5").GetComponent<GameController>().X, GameObject.Find("s5").transform);
-                    RoomData.Instance.turn = "PlayerB";
+                    RoomData.Instance.Turn = "PlayerB";
                 }
                 else if (value == "O")
                 {
                     Instantiate(GameObject.Find("s5").GetComponent<GameController>().O, GameObject.Find("s5").transform);
-                    RoomData.Instance.turn = "PlayerA";
+                    RoomData.Instance.Turn = "PlayerA";
                 }
                 GameObject.Find("s5").GetComponent<GameController>().status = true;
             }
@@ -165,12 +165,12 @@ public class BoardData : Singleton<BoardData>
                 if (value == "X")
                 {
                     Instantiate(GameObject.Find("s6").GetComponent<GameController>().X, GameObject.Find("s6").transform);
-                    RoomData.Instance.turn = "PlayerB";
+                    RoomData.Instance.Turn = "PlayerB";
                 }
                 else if (value == "O")
                 {
                     Instantiate(GameObject.Find("s6").GetComponent<GameController>().O, GameObject.Find("s6").transform);
-                    RoomData.Instance.turn = "PlayerA";
+                    RoomData.Instance.Turn = "PlayerA";
                 }
                 GameObject.Find("s6").GetComponent<GameController>().status = true;
             }
@@ -193,12 +193,12 @@ public class BoardData : Singleton<BoardData>
                 if (value == "X")
                 {
                     Instantiate(GameObject.Find("s7").GetComponent<GameController>().X, GameObject.Find("s7").transform);
-                    RoomData.Instance.turn = "PlayerB";
+                    RoomData.Instance.Turn = "PlayerB";
                 }
                 else if (value == "O")
                 {
                     Instantiate(GameObject.Find("s7").GetComponent<GameController>().O, GameObject.Find("s7").transform);
-                    RoomData.Instance.turn = "PlayerA";
+                    RoomData.Instance.Turn = "PlayerA";
                 }
                 GameObject.Find("s7").GetComponent<GameController>().status = true;
             }
@@ -221,12 +221,12 @@ public class BoardData : Singleton<BoardData>
                 if (value == "X")
                 {
                     Instantiate(GameObject.Find("s8").GetComponent<GameController>().X, GameObject.Find("s8").transform);
-                    RoomData.Instance.turn = "PlayerB";
+                    RoomData.Instance.Turn = "PlayerB";
                 }
                 else if (value == "O")
                 {
                     Instantiate(GameObject.Find("s8").GetComponent<GameController>().O, GameObject.Find("s8").transform);
-                    RoomData.Instance.turn = "PlayerA";
+                    RoomData.Instance.Turn = "PlayerA";
                 }
                 GameObject.Find("s8").GetComponent<GameController>().status = true;
             }
@@ -249,12 +249,12 @@ public class BoardData : Singleton<BoardData>
                 if (value == "X")
                 {
                     Instantiate(GameObject.Find("s9").GetComponent<GameController>().X, GameObject.Find("s9").transform);
-                    RoomData.Instance.turn = "PlayerB";
+                    RoomData.Instance.Turn = "PlayerB";
                 }
                 else if (value == "O")
                 {
                     Instantiate(GameObject.Find("s9").GetComponent<GameController>().O, GameObject.Find("s9").transform);
-                    RoomData.Instance.turn = "PlayerA";
+                    RoomData.Instance.Turn = "PlayerA";
                 }
                 GameObject.Find("s9").GetComponent<GameController>().status = true;
             }

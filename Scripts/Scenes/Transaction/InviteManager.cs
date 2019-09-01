@@ -13,9 +13,6 @@ public class InviteManager : MonoBehaviour
 {
     private DBManager DB;
 
-    private UserData user;
-    private RoomData room;
-
     public Text inviteMessage;
 
     public Button acceptInvite;
@@ -26,8 +23,6 @@ public class InviteManager : MonoBehaviour
     private void Start()
     {
         DB = DBManager.Instance;
-        user = UserData.Instance;
-        room = RoomData.Instance;
 
         acceptInvite.onClick.AddListener(AcceptInvite);
         rejectInvite.onClick.AddListener(RejectInvite);
