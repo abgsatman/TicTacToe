@@ -60,4 +60,12 @@ public class Gameplay : MonoBehaviour
             playerBScore.text = user.score.ToString();
         }
     }
+
+    public void ExitButton()
+    {
+        Debug.Log("Oyundan ayrılma süreci başladı!");
+ 
+        //result bilgisi gönder
+        DB.SetResult();
+    }
 }

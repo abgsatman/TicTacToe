@@ -532,11 +532,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5efed44bb931b3846870dc5dc046340a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  readyButton: {fileID: 0}
   playerAReadyText: {fileID: 530474046}
   playerBReadyText: {fileID: 594483808}
   noticeText: {fileID: 1816935161}
-  inviteObject: {fileID: 8614890419324718372, guid: d7eec7d1378862b409bbcfdacb9a069f,
+  inviteObject: {fileID: 8614890419324718372, guid: 7183ba284996be4429c7bce69478f897,
     type: 3}
 --- !u!1 &1816935159
 GameObject:

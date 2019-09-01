@@ -123,6 +123,30 @@ public class RoomData : Singleton<RoomData>
                 return;
             }
             _result = value;
+            if(value == "PlayerA" && UserData.Instance.gameState == GameState.Gameplay)
+            {
+                if (playerId == "PlayerA")
+                {
+                    Debug.Log("Kazandın!");
+                }
+                else if (playerId == "PlayerB")
+                {
+                    Debug.Log("Kaybettin!");
+                }
+                DBManager.Instance.FinishGame();
+            }
+            else if (value == "PlayerB" && UserData.Instance.gameState == GameState.Gameplay)
+            {
+                if (playerId == "PlayerA")
+                {
+                    Debug.Log("Kaybettin!");
+                }
+                else if (playerId == "PlayerB")
+                {
+                    Debug.Log("Kazandın!");
+                }
+                DBManager.Instance.FinishGame();
+            }
         }
     }
     #endregion

@@ -218,11 +218,11 @@ public class DBManager : Singleton<DBManager>
         Dictionary<string, object> result = new Dictionary<string, object>();
         if (room.playerId == "PlayerA")
         {
-            result["Result"] = "PlayerA";
+            result["Result"] = "PlayerB";
         }
         if (room.playerId == "PlayerB")
         {
-            result["Result"] = "PlayerB";
+            result["Result"] = "PlayerA";
         }
 
         roomsDatabase.Child(room.roomId).UpdateChildrenAsync(result);
@@ -411,5 +411,15 @@ public class DBManager : Singleton<DBManager>
     public void CloseListenAcceptedInvites()
     {
         FirebaseDatabase.DefaultInstance.GetReference("AcceptedInvites").Child(user.userId).ValueChanged -= ListenAcceptedInvites;
+    }
+
+    public void FinishGame()
+    {
+        //event kapama
+        CloseListenAcceptedInvites();
+        CloseListenInvites();
+        CloseListenRoom();
+
+        SceneManager.LoadScene("Result");
     }
 }

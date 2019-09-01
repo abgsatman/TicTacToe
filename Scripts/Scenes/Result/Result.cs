@@ -7,18 +7,46 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Result : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private UserData user;
+    private RoomData room;
 
-    // Update is called once per frame
-    void Update()
+    public Text result;
+
+    private void Start()
     {
-        
+        user = UserData.Instance;
+        room = RoomData.Instance;
+
+        if(room.Result == "PlayerA")
+        {
+            if(room.playerId == "PlayerA")
+            {
+                result.text = "SEN KAZANDIN!";
+            }
+            else if(room.playerId == "PlayerB")
+            {
+                result.text = "KAYBETTİN!";
+            }
+        }
+        else if(room.Result == "PlayerB")
+        {
+            if (room.playerId == "PlayerA")
+            {
+                result.text = "KAYBETTİN!";
+            }
+            else if (room.playerId == "PlayerB")
+            {
+                result.text = "SEN KAZANDIN!";
+            }
+        }
+    }
+    public void GoLobby()
+    {
+        SceneManager.LoadScene("Lobby");
     }
 }
