@@ -33,6 +33,9 @@ public class Lobby : MonoBehaviour
         createRoom.onClick.AddListener(CreateRoom);
 
         DB.GetRoomList(gameListForm);
+
+        //auto login off
+        //DB.auth.auth.SignOut();
     }
 
     void JoinRoom()

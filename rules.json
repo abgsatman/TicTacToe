@@ -1,0 +1,88 @@
+{
+    "rules": {
+      	"Invites": {
+        		".write": true,
+            ".read": true,
+        },
+        "AcceptedInvites": {
+        		".write": true,
+            ".read": true,
+        },
+      	"Users": {
+            ".write": "data.child('$user_id').val() === auth.uid",
+            ".read": true,
+            "$user_id": {
+                ".write": "$user_id === auth.uid",
+                ".read": true,
+                "General": {
+                    ".write": "$user_id === auth.uid",
+                    ".read": true,
+                    "Username": {
+                        ".write": "$user_id === auth.uid",
+                        ".read": true
+                    }
+                },
+                "Progression": {
+                    ".write": "$user_id === auth.uid",
+                    ".read": true,
+                    "Score": {
+                        ".write": "$user_id === auth.uid",
+                        ".read": true
+                    }
+                }
+            }
+        },
+        "Rooms": {
+            ".write": true,
+            ".read": true,
+            "$room_id": {
+                ".write": true,
+                ".read": true,
+                "Board": {
+                    ".write": true,
+                    ".read": true,
+                    "s1": {
+                        ".write": "data.parent().exists() && (data.parent().child('PlayerA').val() === auth.uid || data.parent().child('PlayerB').val() === auth.uid)",
+                        ".read": true
+                    },
+                    "s2": {
+                        ".write": "data.parent().exists() && (data.parent().child('PlayerA').val() === auth.uid || data.parent().child('PlayerB').val() === auth.uid)",
+                        ".read": true
+                    },
+                    "s3": {
+                        ".write": "data.parent().exists() && (data.parent().child('PlayerA').val() === auth.uid || data.parent().child('PlayerB').val() === auth.uid)",
+                        ".read": true
+                    },
+                    "s4": {
+                        ".write": "data.parent().exists() && (data.parent().child('PlayerA').val() === auth.uid || data.parent().child('PlayerB').val() === auth.uid)",
+                        ".read": true
+                    },
+                    "s5": {
+                        ".write": "data.parent().exists() && (data.parent().child('PlayerA').val() === auth.uid || data.parent().child('PlayerB').val() === auth.uid)",
+                        ".read": true
+                    },
+                    "s6": {
+                        ".write": "data.parent().exists() && (data.parent().child('PlayerA').val() === auth.uid || data.parent().child('PlayerB').val() === auth.uid)",
+                        ".read": true
+                    },
+                    "s7": {
+                        ".write": "data.parent().exists() && (data.parent().child('PlayerA').val() === auth.uid || data.parent().child('PlayerB').val() === auth.uid)",
+                        ".read": true
+                    },
+                    "s8": {
+                        ".write": "data.parent().exists() && (data.parent().child('PlayerA').val() === auth.uid || data.parent().child('PlayerB').val() === auth.uid)",
+                        ".read": true
+                    },
+                    "s9": {
+                        ".write": "data.parent().exists() && (data.parent().child('PlayerA').val() === auth.uid || data.parent().child('PlayerB').val() === auth.uid)",
+                        ".read": true
+                    }
+                },
+                "Result": {
+                    ".write": "data.child('PlayerA').val() === auth.uid || data.child('PlayerB').val() === auth.uid",
+                    ".read": true
+                }
+            }
+        }
+    }
+}
